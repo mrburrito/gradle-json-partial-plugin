@@ -48,12 +48,13 @@ class JSONPartial {
      * @return a SortedMap whose key order matches the order of keys in the input map
      */
     private static Map matchKeyOrderingFromSourceMap(final Map source, final Map target) {
+        List sortedKeys = [] + source.keySet()
+        List newKeys = [] + target.keySet()
+        newKeys.removeAll(sortedKeys)
+        int includeIndex = sortedKeys.indexOf(INCLUDE_PARTIAL)
+        includeIndex >= 0 ? sortedKeys.addAll(includeIndex, newKeys) : sortedKeys.addAll(newKeys)
         Map sortMap = [:]
-        source.keySet().eachWithIndex{ key, idx -> sortMap[key] = idx }
-        ([] + target.keySet()).with {
-            removeAll(source.keySet())
-            sort().eachWithIndex { key, idx -> sortMap[key] = source.size() + idx }
-        }
+        sortedKeys.eachWithIndex { key, idx -> sortMap[key] = idx }
         target.sort { e1, e2 -> sortMap[e1.key] <=> sortMap[e2.key] }
     }
 
